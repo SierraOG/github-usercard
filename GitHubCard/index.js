@@ -59,10 +59,60 @@ const cards = document.querySelector('.cards');
 
 const userName = 'SierraOG';
 
+// axios get 
 axios.get(`https://api.github.com/users/${userName}`)
-.then(data => {
-  console.log(data)
-})
-.catch(error => {
-  console.log('error')
-})
+  .then(data => {
+    console.log(data.data)
+    const userObject = data.data
+    const element = createCard(userObject)
+    cards.appendChild(element)
+  })
+  .catch(error => {
+    console.log('error')
+  })
+
+
+// create component
+function createCard(userObject){
+  // create new elements
+  const cardDiv = document.createElement('div');
+  const userImage = document.createElement('img');
+  const cardContent = document.createElement('div');
+  const name = document.createElement('h3');
+  const usersUserName = document.createElement('p');
+  const location = document.createElement('p');
+  const profile = document.createElement('p');
+  const link = document.createElement('a');
+  const followers = document.createElement('p');
+  const following = document.createElement('p');
+  const bio = document.createElement('p');
+
+  // setup element structure
+  cardDiv.appendChild(userImage);
+  cardDiv.appendChild(cardContent);
+  cardContent.appendChild(name);
+  cardContent.appendChild(usersUserName);
+  cardContent.appendChild(location);
+  cardContent.appendChild(profile);
+  profile.appendChild(link);
+  cardContent.appendChild(followers);
+  cardContent.appendChild(following);
+  cardContent.appendChild(bio);
+
+  // add class names 
+  cardDiv.classList.add('card');
+  cardContent.classList.add('card-info');
+  name.classList.add('name');
+
+  // add content from input object 
+  userImage.src = userObject.avatar_url;
+  name.textContent = userObject.name;
+  usersUserName.textContent = userObject.login; 
+  location.textContent = userObject.location;
+  link.href = userObject.html_url;
+  followers.textContent = userObject.followers;
+  following.textContent = userObject.following;
+  bio.textContent = userObject.bio;
+
+  return cardDiv;
+}
