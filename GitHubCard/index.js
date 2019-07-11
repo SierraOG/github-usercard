@@ -53,3 +53,16 @@ const followersArray = [];
   luishrd
   bigknell
 */
+
+// select cards div to attach our cards
+const cards = document.querySelector('.cards');
+
+const userName = 'SierraOG';
+
+axios.get(`https://api.github.com/users/${userName}`)
+.then(data => {
+  console.log(data)
+})
+.catch(error => {
+  console.log('error')
+})
