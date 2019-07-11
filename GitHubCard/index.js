@@ -60,13 +60,14 @@ const cards = document.querySelector('.cards');
 const myUserName = 'SierraOG';
 
 // array of user names of my friends and LS instructors
-const friendsArray = ['tetondan','dustinmyers','justsml','luishrd','bigknell', 'paulapaysan', 'corbosiny', 'patpalmerston', myUserName];
+const friendsArray = ['tetondan','dustinmyers','justsml','luishrd','bigknell'];
 
 // axios get data for each person in friend array 
 friendsArray.forEach(userName => {
 axios.get(`https://api.github.com/users/${userName}`)
   .then(data => {
     const userObject = data.data
+    console.log(userObject)
     const element = createCard(userObject)
     cards.append(element)
   })
@@ -75,6 +76,42 @@ axios.get(`https://api.github.com/users/${userName}`)
     errorMsg.textContent = "Error getting data from API"
     cards.append(errorMsg)
   })
+})
+
+
+// axios get followers list from myusername and add them to page
+axios.get(`https://api.github.com/users/${myUserName}`)
+  .then(data => {
+    const userObject = data.data
+    const myFollowers = userObject.followers_url
+
+    axios.get(myFollowers)
+    .then(data =>{
+      const userFollowers = data.data
+      userFollowers.forEach(follower => {
+        const followerUserName = follower.login
+
+        axios.get(`https://api.github.com/users/${followerUserName}`)
+          .then(data => {
+            const userObject = data.data
+            const element = createCard(userObject)
+            cards.append(element)
+          })
+          .catch(error => {
+            const errorMsg = document.createElement('h3');
+            errorMsg.textContent = "Error getting data from API"
+            cards.append(errorMsg)
+          })
+      })
+    })
+  })
+  .catch(error=>{
+    console.log('error')
+  })
+.catch(error => {
+  const errorMsg = document.createElement('h3');
+  errorMsg.textContent = "Error getting data from API"
+  cards.append(errorMsg)
 })
 
 // create card component function
