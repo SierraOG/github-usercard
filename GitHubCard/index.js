@@ -24,7 +24,6 @@
           user, and adding that card to the DOM.
 */
 
-const followersArray = [];
 
 /* Step 3: Create a function that accepts a single object as its only argument,
           Using DOM methods and properties, create a component that will return the following DOM element:
@@ -57,22 +56,28 @@ const followersArray = [];
 // select cards div to attach our cards
 const cards = document.querySelector('.cards');
 
-const userName = 'SierraOG';
+// my github user name
+const myUserName = 'SierraOG';
 
-// axios get 
+// array of user names of my friends and LS instructors
+const friendsArray = ['tetondan','dustinmyers','justsml','luishrd','bigknell', 'paulapaysan', 'corbosiny', 'patpalmerston', myUserName];
+
+// axios get data for each person in friend array 
+friendsArray.forEach(userName => {
 axios.get(`https://api.github.com/users/${userName}`)
   .then(data => {
-    console.log(data.data)
     const userObject = data.data
     const element = createCard(userObject)
-    cards.appendChild(element)
+    cards.append(element)
   })
   .catch(error => {
-    console.log('error')
+    const errorMsg = document.createElement('h3');
+    errorMsg.textContent = "Error getting data from API"
+    cards.append(errorMsg)
   })
+})
 
-
-// create component
+// create card component function
 function createCard(userObject){
   // create new elements
   const cardDiv = document.createElement('div');
@@ -82,22 +87,10 @@ function createCard(userObject){
   const usersUserName = document.createElement('p');
   const location = document.createElement('p');
   const profile = document.createElement('p');
-  const link = document.createElement('a');
+  const gitLink = document.createElement('a');
   const followers = document.createElement('p');
   const following = document.createElement('p');
   const bio = document.createElement('p');
-
-  // setup element structure
-  cardDiv.appendChild(userImage);
-  cardDiv.appendChild(cardContent);
-  cardContent.appendChild(name);
-  cardContent.appendChild(usersUserName);
-  cardContent.appendChild(location);
-  cardContent.appendChild(profile);
-  profile.appendChild(link);
-  cardContent.appendChild(followers);
-  cardContent.appendChild(following);
-  cardContent.appendChild(bio);
 
   // add class names 
   cardDiv.classList.add('card');
@@ -108,11 +101,26 @@ function createCard(userObject){
   userImage.src = userObject.avatar_url;
   name.textContent = userObject.name;
   usersUserName.textContent = userObject.login; 
-  location.textContent = userObject.location;
-  link.href = userObject.html_url;
-  followers.textContent = userObject.followers;
-  following.textContent = userObject.following;
-  bio.textContent = userObject.bio;
+  location.textContent = `Location: ${userObject.location}`;
+  profile.textContent = `Profile: `;
+  gitLink.href = userObject.html_url;
+  gitLink.textContent = userObject.html_url;
+  followers.textContent = `Followers: ${userObject.followers}`;
+  following.textContent = `Following: ${userObject.following}`;
+  bio.textContent = `Bio: ${userObject.bio}`;
 
+  // setup element structure
+  cardDiv.appendChild(userImage);
+  cardDiv.appendChild(cardContent);
+  cardContent.appendChild(name);
+  cardContent.appendChild(usersUserName);
+  cardContent.appendChild(location);
+  cardContent.appendChild(profile);
+  profile.appendChild(gitLink);
+  cardContent.appendChild(followers);
+  cardContent.appendChild(following);
+  cardContent.appendChild(bio);
+
+  // return card component
   return cardDiv;
 }
