@@ -56,9 +56,6 @@
 // select cards div to attach our cards
 const cards = document.querySelector('.cards');
 
-// my github user name
-const myUserName = 'SierraOG';
-
 // array of user names of my friends and LS instructors
 const friendsArray = ['tetondan','dustinmyers','justsml','luishrd','bigknell'];
 
@@ -78,6 +75,8 @@ axios.get(`https://api.github.com/users/${userName}`)
   })
 })
 
+// my github user name
+const myUserName = 'sierraog';
 
 // axios get followers list from myusername and add them to page
 axios.get(`https://api.github.com/users/${myUserName}`)
@@ -104,14 +103,14 @@ axios.get(`https://api.github.com/users/${myUserName}`)
           })
       })
     })
-  })
-  .catch(error=>{
-    console.log('error')
-  })
-.catch(error => {
-  const errorMsg = document.createElement('h3');
-  errorMsg.textContent = "Error getting data from API"
-  cards.append(errorMsg)
+    })
+    .catch(error=>{
+      console.log('error')
+    })
+  .catch(error => {
+    const errorMsg = document.createElement('h3');
+    errorMsg.textContent = "Error getting data from API"
+    cards.append(errorMsg)
 })
 
 // create card component function
