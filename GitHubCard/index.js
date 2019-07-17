@@ -24,7 +24,6 @@
           user, and adding that card to the DOM.
 */
 
-const followersArray = [];
 
 /* Step 3: Create a function that accepts a single object as its only argument,
           Using DOM methods and properties, create a component that will return the following DOM element:
@@ -53,3 +52,111 @@ const followersArray = [];
   luishrd
   bigknell
 */
+
+// select cards div to attach our cards
+const cards = document.querySelector('.cards');
+
+// array of user names of my friends and LS instructors
+const friendsArray = ['tetondan','dustinmyers','justsml','luishrd','bigknell'];
+
+// axios get data for each person in friend array 
+friendsArray.forEach(userName => {
+axios.get(`https://api.github.com/users/${userName}`)
+  .then(data => {
+    const userObject = data.data
+    console.log(userObject)
+    const element = createCard(userObject)
+    cards.append(element)
+  })
+  .catch(error => {
+    const errorMsg = document.createElement('h3');
+    errorMsg.textContent = "Error getting data from API"
+    cards.append(errorMsg)
+  })
+})
+
+// my github user name
+const myUserName = 'sierraog';
+
+// axios get followers list from myusername and add them to page
+axios.get(`https://api.github.com/users/${myUserName}`)
+  .then(data => {
+    const userObject = data.data
+    const myFollowers = userObject.followers_url
+
+    axios.get(myFollowers)
+    .then(data =>{
+      const userFollowers = data.data
+      userFollowers.forEach(follower => {
+        const followerUserName = follower.login
+
+        axios.get(`https://api.github.com/users/${followerUserName}`)
+          .then(data => {
+            const userObject = data.data
+            const element = createCard(userObject)
+            cards.append(element)
+          })
+          .catch(error => {
+            const errorMsg = document.createElement('h3');
+            errorMsg.textContent = "Error getting data from API"
+            cards.append(errorMsg)
+          })
+      })
+    })
+    })
+    .catch(error=>{
+      console.log('error')
+    })
+  .catch(error => {
+    const errorMsg = document.createElement('h3');
+    errorMsg.textContent = "Error getting data from API"
+    cards.append(errorMsg)
+})
+
+// create card component function
+function createCard(userObject){
+  // create new elements
+  const cardDiv = document.createElement('div');
+  const userImage = document.createElement('img');
+  const cardContent = document.createElement('div');
+  const name = document.createElement('h3');
+  const usersUserName = document.createElement('p');
+  const location = document.createElement('p');
+  const profile = document.createElement('p');
+  const gitLink = document.createElement('a');
+  const followers = document.createElement('p');
+  const following = document.createElement('p');
+  const bio = document.createElement('p');
+
+  // add class names 
+  cardDiv.classList.add('card');
+  cardContent.classList.add('card-info');
+  name.classList.add('name');
+
+  // add content from input object 
+  userImage.src = userObject.avatar_url;
+  name.textContent = userObject.name;
+  usersUserName.textContent = userObject.login; 
+  location.textContent = `Location: ${userObject.location}`;
+  profile.textContent = `Profile: `;
+  gitLink.href = userObject.html_url;
+  gitLink.textContent = userObject.html_url;
+  followers.textContent = `Followers: ${userObject.followers}`;
+  following.textContent = `Following: ${userObject.following}`;
+  bio.textContent = `Bio: ${userObject.bio}`;
+
+  // setup element structure
+  cardDiv.appendChild(userImage);
+  cardDiv.appendChild(cardContent);
+  cardContent.appendChild(name);
+  cardContent.appendChild(usersUserName);
+  cardContent.appendChild(location);
+  cardContent.appendChild(profile);
+  profile.appendChild(gitLink);
+  cardContent.appendChild(followers);
+  cardContent.appendChild(following);
+  cardContent.appendChild(bio);
+
+  // return card component
+  return cardDiv;
+}
